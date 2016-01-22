@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Moveez</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Menu Values -->
+    <string name="action_refresh">Refresh</string>
+    
+    <!-- Preferences -->
+    <string name="pref_sort_key" translatable="false">sort</string>
+    <string name="pref_sort_label">Sort Order</string>
+    <string name="pref_sort_label_mostpop">Most Popular</string>
+    <string name="pref_sort_value_mostpop">popularity.desc</string>
+    <string name="pref_sort_label_highgross">Highest Grossing</string>
+    <string name="pref_sort_value_highgross">vote_average.desc</string>
+    <string name="title_activity_movie_detail">MovieDetailActivity</string>
+</resources>
