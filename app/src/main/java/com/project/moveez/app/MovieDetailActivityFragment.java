@@ -1,24 +1,29 @@
 package com.project.moveez.app;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.project.moveez.app.data.MovieContract;
+import com.project.moveez.app.data.MovieProvider;
 
 /**
  * Created by dandold on 21/01/2016.
  */
 public class MovieDetailActivityFragment extends Fragment
-    implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String[] MOVIE_COLUMNS = {
+    public static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
             MovieContract.MovieEntry.COLUMN_DATE,
             MovieContract.MovieEntry.COLUMN_MOVIE_TITLE,
@@ -42,49 +47,38 @@ public class MovieDetailActivityFragment extends Fragment
     private String movieData;
 
     private TextView tv;
+    int _id;
 
     public MovieDetailActivityFragment() {
     }
 
+    public static MovieDetailActivityFragment newInstance(int id) {
+        MovieDetailActivityFragment f = new MovieDetailActivityFragment();
+        Bundle args = new Bundle();
+        args.putInt("_id", id);
+        f.setArguments(args);
+        return f;
+    }
+
+
     /**
-     *
      * @param inflater
      * @param container
      * @param savedInstanceState
-     * @return
-     *
-     * onCreateView() is the standard method called for a fragment class
+     * @return onCreateView() is the standard method called for a fragment class
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
-        /**
-         * The intent gets the intent and extra information
-         * Extra information is passed in the intent as EXTRA_TEXT
-         * The EXTRA_TEXT is the film details got from the API
-         * This is got with the intent.getStringExtra method
-         *
-         * Reference - http://developer.android.com/reference/android/content/Intent.html
-         * Guide - http://developer.android.com/guide/components/intents-filters.html
-         */
+        _id = getArguments().getInt("_id");
+        Movie movie = MovieProvider.getMovie(_id);
 
-        Bundle extras = getActivity().getIntent().getExtras();
-        String title = extras.getString(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE);
-        String desc = extras.getString(MovieContract.MovieEntry.COLUMN_DESCRIPTION);
-
-
-//        Intent intent = getActivity().getIntent();
-//        if(intent != null && intent.hasExtra(Intent.EXTRA_TEXT)){
-//            movieData = intent.getStringExtra(Intent.EXTRA_TEXT);
-//            Log.i(TAG, intent.getStringExtra(Intent.EXTRA_TEXT));
-//            TextView tv = (TextView) rootView.findViewById(R.id.movie_details);
-//            tv.setText(movieData);
-//        }
+        Log.i(TAG, "onCreateView: ");
 
         tv = (TextView) rootView.findViewById(R.id.movie_details);
-tv.setText(desc);
+
         return rootView;
     }
 
@@ -96,30 +90,29 @@ tv.setText(desc);
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//        Intent intent = getActivity().getIntent();
-//        if(intent == null){
-//            return null;
-//        }
-//
-//        return new CursorLoader(
-//                getActivity(),
-//                intent.getData(),
-//                MOVIE_COLUMNS,
-//                null,
-//                null,
-//                null
-//        );
-        return null;
+        Intent intent = getActivity().getIntent();
+        if (intent == null) {
+            return null;
+        }
+
+        return new CursorLoader(
+                getActivity(),
+                intent.getData(),
+                MOVIE_COLUMNS,
+                null,
+                null,
+                null
+        );
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-//        if(data != null && data.moveToFirst()){
-//            String movieName = data.getString(COL_MOVIE_TITLE);
-//            //tv = (TextView) getActivity().findViewById(R.id.movie_details);
-//            tv.setText(movieName);
-//        }
+        if (data != null && data.moveToFirst()) {
+            String movieName = data.getString(COL_MOVIE_TITLE);
+            //tv = (TextView) getActivity().findViewById(R.id.movie_details);
+            tv.setText(movieName);
+        }
     }
 
     @Override

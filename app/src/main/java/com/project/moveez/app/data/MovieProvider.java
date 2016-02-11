@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
+import com.project.moveez.app.Movie;
+import com.project.moveez.app.MovieDetailActivityFragment;
+
 /**
  * Content providers are one of the primary building blocks of Android applications, providing content to applications.
  * They encapsulate data and provide it to applications through the single ContentResolver interface.
@@ -20,7 +23,7 @@ public class MovieProvider extends ContentProvider {
     private static final String LOG_TAG = MovieProvider.class.getSimpleName();
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
-    private MovieDBHelper mOpenHelper;
+    public static MovieDBHelper mOpenHelper;
 
     private static final int MOVIE = 100;
 
@@ -121,4 +124,34 @@ public class MovieProvider extends ContentProvider {
             values.put(MovieContract.MovieEntry.COLUMN_DATE, MovieContract.normalizeDate(dateValue));
         }
     }
+
+
+
+
+
+
+    public static Movie getMovie(int name) {
+        Movie movie = new Movie();
+        String where = MovieContract.MovieEntry._ID + " = '" + name + "'";
+        Cursor cursor = mOpenHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME, MovieDetailActivityFragment.MOVIE_COLUMNS, where, null, null, null, null, null);
+
+        if (cursor.getColumnCount() > 0) {
+            cursor.moveToNext();
+            movie.setTitle(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE)));
+            movie.setDesc(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_DESCRIPTION)));
+            movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE)));
+            movie.setRating(cursor.getDouble(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_RATING)));
+            movie.setPoster(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER)));
+            movie.setTodaysDate(cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_DATE)));
+        }
+        cursor.close();
+        return movie;
+    }
+
+    public static boolean rowExists(String name) {
+        String where = MovieContract.MovieEntry.COLUMN_MOVIE_TITLE + " = '" + name + "'";
+        Cursor cursor = mOpenHelper.getReadableDatabase().query(MovieContract.MovieEntry.TABLE_NAME, MovieDetailActivityFragment.MOVIE_COLUMNS, where, null, null, null, null, null);
+        return cursor.getCount() != 0;
+    }
+
 }

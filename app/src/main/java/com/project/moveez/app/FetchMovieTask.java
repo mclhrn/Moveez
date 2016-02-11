@@ -8,7 +8,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.format.Time;
 import android.util.Log;
+
 import com.project.moveez.app.data.MovieContract;
+import com.project.moveez.app.data.MovieProvider;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +35,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
     private final Context mContext;
 
-    public FetchMovieTask(Context context){
+    public FetchMovieTask(Context context) {
         this.mContext = context;
     }
 
@@ -161,7 +164,6 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             dayTime.setToNow();
             int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
 
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(movieArray.length());
             if (movieArray != null) {
                 for (int i = 0; i < movieArray.length(); i++) {
                     JSONObject movies = movieArray.getJSONObject(i);
@@ -181,39 +183,29 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                     movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movieTitle);
                     movieValues.put(MovieContract.MovieEntry.COLUMN_DATE, dateTime);
 
-                    cVVector.add(movieValues);
+                    if (MovieProvider.rowExists(movieTitle)) {
+                        continue;
+                    }
 
-                    //Log.i(LOG_TAG, "Movie Title - " + movieTitle);
+                    MovieProvider.mOpenHelper.getReadableDatabase().insert(MovieContract.MovieEntry.TABLE_NAME, null, movieValues);
                 }
-
-                int inserted = 0;
-                if (cVVector.size() > 0) {
-                    ContentValues[] array = new ContentValues[cVVector.size()];
-                    cVVector.toArray(array);
-                    inserted = mContext.getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, array);
-                }
-
-                Log.i(LOG_TAG, "Inserted " + inserted + " items to the database");
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void checkDBValues(Context context){
+    public void checkDBValues(Context context) {
         Cursor cursor = context.getContentResolver().query(
                 MovieContract.MovieEntry.CONTENT_URI,
                 null,
                 null,
                 null,
                 null
-                );
+        );
 
         int count = 0;
-        while(cursor.moveToNext()){
-//            Log.i(LOG_TAG, "Movie Title - "
-//                    + cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE))
-//                    + " - got from DB");
+        while (cursor.moveToNext()) {
             count++;
         }
         Log.i(LOG_TAG, "Got " + count + " values from the DB");

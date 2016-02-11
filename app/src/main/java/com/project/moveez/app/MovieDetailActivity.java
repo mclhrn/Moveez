@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.project.moveez.app.data.MovieContract;
+
 public class MovieDetailActivity extends AppCompatActivity {
 
     @Override
@@ -15,7 +17,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment, new MovieDetailActivityFragment())
+                    .add(R.id.fragment, MovieDetailActivityFragment.newInstance(this.getIntent().getExtras().getInt(MovieContract.MovieEntry._ID)))
                     .commit();
         }
     }

@@ -3,6 +3,7 @@ package com.project.moveez.app;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,10 @@ public class CustomAdapter extends CursorAdapter { //ArrayAdapter<ArrayList> {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        //Log.i(LOG_TAG, "Movie Title - " + cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE)));
+
+        String title =cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE));
+        Log.i(LOG_TAG, "Movie Title - " + title);
+
         ImageView iv = (ImageView) view.findViewById(R.id.list_movie_pics_imageview);
 
         int columIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER);
