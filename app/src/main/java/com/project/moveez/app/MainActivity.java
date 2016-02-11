@@ -13,6 +13,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /**
+         * Start the fragment class
+         */
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment, new MainActivityFragment())
@@ -37,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            /**
+             * Launch the settings activity
+             */
             startActivity(new Intent(this, Settings.class));
             return true;
         }

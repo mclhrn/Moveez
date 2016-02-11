@@ -34,6 +34,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.project.moveez.app.MainActivity" />
         </activity>
+        <provider
+                android:authorities="com.project.moveez.app"
+                android:name=".data.MovieProvider" />
     </application>
 
 </manifest>
